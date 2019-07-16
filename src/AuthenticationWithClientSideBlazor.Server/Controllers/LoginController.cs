@@ -43,7 +43,7 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
 
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],
-                _configuration["JwtIssuer"],
+                _configuration["JwtAudience"],
                 claims,
                 expires: expiry,
                 signingCredentials: creds
