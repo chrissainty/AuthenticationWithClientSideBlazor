@@ -22,16 +22,14 @@ namespace AuthenticationWithClientSideBlazor.Client
         {
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
 
-            if (!string.IsNullOrWhiteSpace(savedToken))
+            if (string.IsNullOrWhiteSpace(savedToken))
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
             var userInfo = await _httpClient.GetJsonAsync<UserModel>("api/accounts/user");
-
-            var identity = userInfo.IsAuthenticated
-                ? new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userInfo.Email) }, "apiauth")
-                : new ClaimsIdentity();
+            var identity = userInfo.IsAuthenticated ? new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userInfo.Email) }, "apiauth") : new ClaimsIdentity();
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
