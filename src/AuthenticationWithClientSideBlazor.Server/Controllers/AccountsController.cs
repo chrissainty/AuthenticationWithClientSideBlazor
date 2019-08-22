@@ -1,8 +1,6 @@
 ﻿using AuthenticationWithClientSideBlazor.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,23 +35,6 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
             }
 
             return Ok(new RegisterResult { Successful = true });
-        }
-
-        [HttpGet("user")]
-        public IActionResult GetUser()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                var userModel = new UserModel
-                {
-                    Email = User.Identity.Name,
-                    IsAuthenticated = true
-                };
-
-                return Ok(userModel);
-            }
-
-            return Ok(LoggedOutUser);
         }
     }
 }
