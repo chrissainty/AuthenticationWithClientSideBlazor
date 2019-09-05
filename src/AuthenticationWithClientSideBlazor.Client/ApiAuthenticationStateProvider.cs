@@ -35,10 +35,10 @@ namespace AuthenticationWithClientSideBlazor.Client
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
         }
 
-        public void MarkUserAsAuthenticated(string email)
+        public void MarkUserAsAuthenticated(string token)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, email) }, "apiauth"));
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+			var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
+			var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }
 
@@ -49,38 +49,32 @@ namespace AuthenticationWithClientSideBlazor.Client
             NotifyAuthenticationStateChanged(authState);
         }
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        private IEnumerable<Claim> ParseClaimsFromJwt(string jwtToken)
         {
-            var claims = new List<Claim>();
-            var payload = jwt.Split('.')[1];
-            var jsonBytes = ParseBase64WithoutPadding(payload);
-            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+			string[] tokenSegments = jwtToken.Split('.');
+			if (tokenSegments.Length != 3)
+				throw new ArgumentException("JWT Token should have three segments");
 
-            keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+			var payload = tokenSegments[1];
+			var jsonBytes = ParseBase64WithoutPadding(payload);
+			var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            if (roles != null)
-            {
-                if (roles.ToString().Trim().StartsWith("["))
-                {
-                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString());
+			var claims = new List<Claim>();
+			if ((keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles)) && (roles != null) && (roles is JsonElement))
+			{
+				JsonElement jsonRoles = (JsonElement)roles;
+				if (jsonRoles.ValueKind == JsonValueKind.Array)
+					claims.AddRange(jsonRoles.EnumerateArray().Select(role => new Claim(ClaimTypes.Role, role.GetString())));
+				else
+					claims.Add(new Claim(ClaimTypes.Role, roles.ToString()));
 
-                    foreach (var parsedRole in parsedRoles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
-                    }
-                }
-                else
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, roles.ToString()));
-                }
-
-                keyValuePairs.Remove(ClaimTypes.Role);
-            }
-
-            claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
-
-            return claims;
-        }
+				// remove the roles claim from the  
+				keyValuePairs.Remove(ClaimTypes.Role);
+			}
+			//add other claims as well
+			claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
+			return claims;
+		}
 
         private byte[] ParseBase64WithoutPadding(string base64)
         {
