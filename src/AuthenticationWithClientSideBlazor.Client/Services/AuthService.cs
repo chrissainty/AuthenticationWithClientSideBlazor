@@ -1,6 +1,7 @@
 ﻿using AuthenticationWithClientSideBlazor.Shared;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
