@@ -1,6 +1,6 @@
 @page "/register"
 @inject IAuthService AuthService
-@inject IUriHelper UriHelper
+@inject NavigationManager NavigationManager
 
 <h1>Register</h1>
 
@@ -17,23 +17,23 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Please enter your details</h5>
-        <EditForm Model="@RegisterModel" OnValidSubmit="@HandleRegistration">
+        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="form-group">
                 <label for="email">Email address</label>
-                <InputText Id="email" Class="form-control" @bind-Value="@RegisterModel.Email" />
+                <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
                 <ValidationMessage For="@(() => RegisterModel.Email)" />
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <InputText Id="password" Class="form-control" @bind-Value="@RegisterModel.Password" />
+                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
                 <ValidationMessage For="@(() => RegisterModel.Password)" />
             </div>
             <div class="form-group">
                 <label for="password">Confirm Password</label>
-                <InputText Id="password" Class="form-control" @bind-Value="@RegisterModel.ConfirmPassword" />
+                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
                 <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -55,7 +55,7 @@
 
         if (result.Successful)
         {
-            UriHelper.NavigateTo("/login");
+            NavigationManager.NavigateTo("/login");
         }
         else
         {
