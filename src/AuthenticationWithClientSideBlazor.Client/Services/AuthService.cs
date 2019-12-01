@@ -1,6 +1,7 @@
 ﻿using AuthenticationWithClientSideBlazor.Shared;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -31,18 +32,18 @@ namespace AuthenticationWithClientSideBlazor.Client.Services
 
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
-            var result = await _httpClient.PostJsonAsync<LoginResult>("api/Login", loginModel);
+            var loginResult = await _httpClient.PostJsonAsync<LoginResult>("api/Login", loginModel);
 
-            if (result.Successful)
+            if (loginResult.Successful)
             {
-                await _localStorage.SetItemAsync("authToken", result.Token);
-                ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(result.Token);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
+                await _localStorage.SetItemAsync("authToken", loginResult.Token);
+                ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
 
-                return result;
+                return loginResult;
             }
 
-            return result;
+            return loginResult;
         }
 
         public async Task Logout()

@@ -10,8 +10,6 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private static UserModel LoggedOutUser = new UserModel { IsAuthenticated = false };
-
         private readonly UserManager<IdentityUser> _userManager;
 
         public AccountsController(UserManager<IdentityUser> userManager)
@@ -31,7 +29,6 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
                 var errors = result.Errors.Select(x => x.Description);
 
                 return BadRequest(new RegisterResult { Successful = false, Errors = errors });
-
             }
 
             return Ok(new RegisterResult { Successful = true });

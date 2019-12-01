@@ -1,6 +1,6 @@
 @page "/register"
 @inject IAuthService AuthService
-@inject IUriHelper UriHelper
+@inject NavigationManager NavigationManager
 
 <h1>Register</h1>
 
@@ -9,7 +9,7 @@
     <div class="alert alert-danger" role="alert">
         @foreach (var error in Errors)
         {
-            <p>error</p>
+            <p>@error</p>
         }
     </div>
 }
@@ -55,7 +55,7 @@
 
         if (result.Successful)
         {
-            UriHelper.NavigateTo("/login");
+            NavigationManager.NavigateTo("/login");
         }
         else
         {
