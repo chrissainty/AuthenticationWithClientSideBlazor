@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthenticationWithClientSideBlazor.Server.Models;
 
 namespace AuthenticationWithClientSideBlazor.Server.Controllers
 {
@@ -10,9 +11,9 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountsController(UserManager<IdentityUser> userManager)
+        public AccountsController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -20,7 +21,7 @@ namespace AuthenticationWithClientSideBlazor.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]RegisterModel model)
         {
-            var newUser = new IdentityUser { UserName = model.Email, Email = model.Email };
+            var newUser = new ApplicationUser { UserName = model.Email, Email = model.Email };
 
             var result = await _userManager.CreateAsync(newUser, model.Password);
 
