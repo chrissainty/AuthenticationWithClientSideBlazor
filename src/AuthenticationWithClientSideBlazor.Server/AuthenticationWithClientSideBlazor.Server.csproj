@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.1.0-preview3.19555.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0-preview3.19555.2" />
 
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0-preview3.19555.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0-preview3.19555.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0-preview3.19555.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0-preview3.19555.2" />
